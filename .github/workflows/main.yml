@@ -77,11 +77,16 @@ jobs:
     needs: [build]
     env:
       REGISTRY: ghcr.io
-      # Force lowercase repository name
-      IMAGE_NAME: ${{ github.repository_owner | lower }}/${{ github.event.repository.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
+      - name: Set lowercase image name
+        id: set_image
+        run: |
+          LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME=$LOWERCASE_OWNER/${{ github.event.repository.name }}" >> $GITHUB_ENV
+          echo "Full image name: $LOWERCASE_OWNER/${{ github.event.repository.name }}"
       
       - name: Download build artifacts
         uses: actions/download-artifact@v4
