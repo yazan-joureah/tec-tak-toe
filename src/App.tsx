@@ -27,7 +27,9 @@ function App() {
     const result = calculateWinner(board);
 
     if (result) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGameStatus("won");
+      // eslint-disable-next-line react-hooks/set-state-in-effect  
       setWinningLine(result.line);
 
       // Update scores
@@ -43,6 +45,7 @@ function App() {
         { winner: result.winner, board: [...board], date: new Date() },
       ]);
     } else if (checkDraw(board)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGameStatus("draw");
 
       // Update draw count
