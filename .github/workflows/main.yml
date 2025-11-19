@@ -77,7 +77,7 @@ jobs:
     needs: [build]
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.actor }}/tec-tak-toe
+      IMAGE_NAME: yazan-joureah/tec-tak-toe  # HARDCODED personal username
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
