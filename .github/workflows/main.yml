@@ -76,7 +76,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     env:
-      # Define the image name once for consistency
       IMAGE_NAME: yazanjoureah/tec-tak-toe
     steps:
       - name: Checkout code
@@ -107,20 +106,28 @@ jobs:
             type=ref,event=branch
             latest
 
-      - name: Build and push Docker image
+      - name: Build Docker image (without push)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          load: true  # This keeps the image available locally
+
+      - name: Scan for vulnerabilities (local image)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'table'
+          exit-code: 1
+          ignore-unfixed: false
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Scan for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          # Scan the image you just built and pushed
-          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          format: 'table'
-          exit-code: 1
-          ignore-unfixed: false
-          severity: 'CRITICAL,HIGH'
